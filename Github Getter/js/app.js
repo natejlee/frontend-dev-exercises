@@ -40,20 +40,35 @@ $(document).ready(function() {
 
   function searchInventory(search, data) {
     var repoSearch = {};
-    repoSearch[search] = data;
-    localStorage.setItem('repoSearch', repoSearch );
+    var localStore = localStorage.getItem('repoSearch');
+
+    if(localStore){
+      if(localStore[search]){
+        repoSearch = localStore[search];
+      }
+    } else {
+      repoSearch[search] = data;
+      localStorage.setItem('repoSearch', JSON.stringify(repoSearch));
+    }
+
+    return repoSearch;
+  }
+
+  function displayToDom(search, data){
+
   }
 
   function findRepo() {
     var query = $('#search').val();
-    console.log(query);
 
     $.ajax({
       url: 'https://api.github.com/legacy/repos/search/'+ query
     })
       .done(function(data){
-        console.log(data);
-        searchInventory(query, data.repositories);
+
+        var repos = searchInventory(query, data.repositories);
+
+
       })
       .fail(function(data){
         console.err(data);
