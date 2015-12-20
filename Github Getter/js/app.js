@@ -42,14 +42,14 @@ $(document).ready(function() {
     var repoSearch = {};
     var localStore = localStorage.getItem(search);
 
-    if (localStore) {
-      if (localStore[search]) {
-        repoSearch = JSON.parse(localStore[search]);
-      }
-    } else {
+    if(data.length !== 0){
       repoSearch[search] = data;
       localStorage.setItem(search, JSON.stringify(data));
+      toastr.success('Found ' + data.length + ' repos!');
+    } else {
+      toastr.error('Nothing found');
     }
+
     console.log(repoSearch,'this is repo search');
     return repoSearch;
   }
@@ -66,6 +66,7 @@ $(document).ready(function() {
     var checkStore = localStorage.getItem(query);
 
     if(checkStore) {
+      toastr.success('Retrieving from local store. ' + checkStore.length + ' repos found!');
       displayToDom(JSON.parse(checkStore));
     } else {
       $.ajax({
