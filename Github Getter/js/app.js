@@ -40,7 +40,7 @@ $(document).ready(function() {
 
   function searchInventory(search, data) {
     var repoSearch = {};
-    var localStore = localStorage.getItem('repoSearch');
+    var localStore = localStorage.getItem(search);
 
     if (localStore) {
       if (localStore[search]) {
@@ -73,7 +73,7 @@ $(document).ready(function() {
       })
       .done(function(data) {
         searchInventory(query, data.repositories);
-        displayToDom(query, data.repositories);
+        displayToDom(data.repositories);
       })
       .fail(function(data) {
         console.err(data);
