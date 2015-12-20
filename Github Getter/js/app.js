@@ -1,12 +1,12 @@
 /*
     # Endpoint URL #
-    
+
     https://api.github.com/legacy/repos/search/{query}
-    
+
     Note: Github imposes a rate limit of 60 request per minute. Documentation can be found at http://developer.github.com/v3/.
-    
+
     # Example Response JSON #
-    
+
     {
       "meta": {...},
       "data": {
@@ -35,3 +35,32 @@
       }
     }
 */
+
+$(document).ready(function() {
+
+  function searchInventory(search, data) {
+    var repoSearch = {};
+    repoSearch[search] = data;
+    localStorage.setItem('repoSearch', repoSearch );
+  }
+
+  function findRepo() {
+    var query = $('#search').val();
+    console.log(query);
+
+    $.ajax({
+      url: 'https://api.github.com/legacy/repos/search/'+ query
+    })
+      .done(function(data){
+        console.log(data);
+        searchInventory(query, data.repositories);
+      })
+      .fail(function(data){
+        console.err(data);
+      });
+  }
+
+  $('#find').on('click', findRepo);
+
+
+});
