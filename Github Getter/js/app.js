@@ -42,37 +42,45 @@ $(document).ready(function() {
     var repoSearch = {};
     var localStore = localStorage.getItem('repoSearch');
 
-    if(localStore){
-      if(localStore[search]){
-        repoSearch = localStore[search];
+    if (localStore) {
+      if (localStore[search]) {
+        repoSearch = JSON.parse(localStore[search]);
       }
     } else {
       repoSearch[search] = data;
-      localStorage.setItem('repoSearch', JSON.stringify(repoSearch));
+      localStorage.setItem(search, JSON.stringify(data));
     }
-
+    console.log(repoSearch,'this is repo search');
     return repoSearch;
   }
 
-  function displayToDom(search, data){
+  function displayToDom(data) {
+    data.forEach(function(elem) {
+      $("<div>" + elem.owner + " " + elem.name + "</div>").appendTo("#overlay-container")
+    })
 
   }
 
   function findRepo() {
     var query = $('#search').val();
+    var checkStore = localStorage.getItem(query);
 
-    $.ajax({
-      url: 'https://api.github.com/legacy/repos/search/'+ query
-    })
-      .done(function(data){
-
-        var repos = searchInventory(query, data.repositories);
-
-
+    if(checkStore) {
+      displayToDom(JSON.parse(checkStore));
+    } else {
+      $.ajax({
+        url: 'https://api.github.com/legacy/repos/search/' + query
       })
-      .fail(function(data){
+      .done(function(data) {
+        searchInventory(query, data.repositories);
+        displayToDom(query, data.repositories);
+      })
+      .fail(function(data) {
         console.err(data);
       });
+    }
+
+    $('#search').val('');
   }
 
   $('#find').on('click', findRepo);
