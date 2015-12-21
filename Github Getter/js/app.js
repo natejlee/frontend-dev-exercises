@@ -1,8 +1,3 @@
-/*
-    # Endpoint URL #
-    https://api.github.com/legacy/repos/search/{query}
-*/
-
 $(document).ready(function() {
 
   function searchInventory(search, data) {
@@ -27,13 +22,15 @@ $(document).ready(function() {
     }
 
     data.forEach(function(elem) {
-      $("<div>" + elem.owner + " " + elem.name + "</div>").appendTo("#overlay-container")
+      $("<div class='results'>" + elem.owner + " " + elem.name + "</div>").appendTo("#overlay-container")
     })
 
   }
 
-  function findRepo() {
+  function findRepo(event) {
+    event.preventDefault();
     var query = $('#search').val();
+    console.log(query);
     var checkStore = localStorage.getItem(query);
 
     if(checkStore) {
@@ -56,6 +53,5 @@ $(document).ready(function() {
   }
 
   $('#find').on('click', findRepo);
-
 
 });
