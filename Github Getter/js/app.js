@@ -39,7 +39,22 @@ $(document).ready(function() {
     }
 
     data.repositories.forEach(function(elem) {
-      $("<div class='results'>" + elem.owner + "  -  " + elem.name + "</div>").appendTo("#overlay-container")
+      var owner = elem.owner;
+      var name = elem.name;
+      var language = elem.language;
+      var followers = elem.followers;
+      var url = elem.url;
+      var description = elem.description;
+
+      if(language === '') {
+        language = 'no language';
+      }
+
+      if(description === '') {
+        description = 'no description';
+      }
+
+      $("<div class='repo-result'>" + owner + "  -  " + name + "<div class='repo-info'>" + language + " - " + followers + " - " + url + "<div class='repo-description'>" + description + "</div></div></div>").appendTo("#overlay-container");
     })
 
   }
