@@ -12,6 +12,7 @@
 }
 
 .con {
+  max-width: 500px;
   display: inline-block;
   margin-left: 306px;
   padding: 40px 20px 20px 20px;
@@ -21,6 +22,7 @@
 }
 
 .repo-result {
+  width: 100%;
   margin-top: 20px;
   padding-bottom: 10px;
   border-bottom: 2px solid black;

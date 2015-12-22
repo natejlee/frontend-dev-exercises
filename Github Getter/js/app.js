@@ -57,6 +57,16 @@ $(document).ready(function() {
       $("<div class='repo-result'>" + owner + "  -  " + name + "<div class='repo-info'>" + language + " - " + followers + " - " + url + "<div class='repo-description'>" + description + "</div></div></div>").appendTo("#overlay-container");
     })
 
+    $('.repo-result').on('click', function(){
+      var clickedRepo = $(this).children();
+
+      if(clickedRepo.css('display') === 'none'){
+        clickedRepo.css('display', 'block');
+      } else {
+        clickedRepo.css('display', 'none')
+      }
+    })
+
   }
 
   function findRepo(event) {
