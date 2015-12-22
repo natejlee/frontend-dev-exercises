@@ -1,28 +1,45 @@
 $(document).ready(function() {
+  function displayRecent() {
+    var localStore = JSON.parse(localStorage.getItem('cache')) || {};
 
-  function searchInventory(search, data) {
-    var repoSearch = {};
-    var localStore = localStorage.getItem(search);
+    if($('#history').children().length > 0){
+      $('#history').html('');
+    }
 
-    if(data.length !== 0){
-      repoSearch[search] = data;
-      localStorage.setItem(search, JSON.stringify(data));
-      toastr.success('Found ' + data.length + ' repos!');
+    if(localStore) {
+      for(var key in localStore){
+        $("<div class='recent-result'>" + key + "</div>").appendTo("#history")
+      }
+    }
+
+    $('.recent-result').on('click', function() {
+      var clickedValue = $(this).html();
+
+      displayRepo(localStore[clickedValue]);
+    })
+  }
+
+  function cacheSearch(search, data) {
+    var localStore = JSON.parse(localStorage.getItem('cache')) || {};
+
+    if(data.repositories.length !== 0){
+      localStore[search] = data;
+      localStorage.setItem('cache', JSON.stringify(localStore));
+      displayRecent();
+      toastr.success('Found ' + data.repositories.length + ' repos!');
     } else {
       toastr.error('Nothing found');
     }
 
-    console.log(repoSearch,'this is repo search');
-    return repoSearch;
   }
 
-  function displayToDom(data) {
+  function displayRepo(data) {
     if($('#overlay-container').children().length > 0){
       $('#overlay-container').html('');
     }
 
-    data.forEach(function(elem) {
-      $("<div class='results'>" + elem.owner + " " + elem.name + "</div>").appendTo("#overlay-container")
+    data.repositories.forEach(function(elem) {
+      $("<div class='results'>" + elem.owner + "  -  " + elem.name + "</div>").appendTo("#overlay-container")
     })
 
   }
@@ -30,19 +47,19 @@ $(document).ready(function() {
   function findRepo(event) {
     event.preventDefault();
     var query = $('#search').val();
-    console.log(query);
-    var checkStore = localStorage.getItem(query);
+    var checkStore = JSON.parse(localStorage.getItem('cache'));
 
-    if(checkStore) {
-      toastr.success('Retrieving from local store. ' + checkStore.length + ' repos found!');
-      displayToDom(JSON.parse(checkStore));
+    if(checkStore && checkStore[query]) {
+      toastr.success('Retrieving from local store.');
+      displayRepo(checkStore[query]);
     } else {
       $.ajax({
         url: 'https://api.github.com/legacy/repos/search/' + query
       })
       .done(function(data) {
-        searchInventory(query, data.repositories);
-        displayToDom(data.repositories);
+        cacheSearch(query, data);
+        displayRepo(data);
+        displayRecent();
       })
       .fail(function(data) {
         console.err(data);
@@ -53,5 +70,5 @@ $(document).ready(function() {
   }
 
   $('#find').on('click', findRepo);
-
+  displayRecent();
 });
